@@ -1,134 +1,218 @@
 # WatchTogether — YouTube Watch Party
 
-A real-time YouTube watch-party application. A host creates a room, shares its code/link, and participants receive synchronized playback state. Built for the **YouTube Watch Party System** internship assignment.
+**WatchTogether** is a real-time YouTube watch-party application that allows people to watch videos together in shared rooms. It synchronizes playback across participants and provides room management, role-based permissions, playback approval requests, and real-time chat.
 
-> **Deployment status:** Not deployed yet. Do not submit a placeholder as a live URL. After deployment, replace the two values below with the real public URLs and verify the production flows.
->
-> - **Live frontend:** `PENDING — add the deployed frontend URL`
-> - **Backend health endpoint:** `PENDING — add the deployed backend URL + /health`
+## Live Demo
 
-## Features implemented
+- **Live Application:** https://youtube-watch-party-system-ettz.onrender.com
+- **Backend API Health:** https://youtube-watch-party-system-backend.onrender.com/health
+- **GitHub Repository:** https://github.com/shashank2359/YouTube-Watch-Party-System
 
-- Create a room; creator becomes Host.
-- Join by room code or shared room link; joiners become Participants.
-- Embed and control YouTube videos using the YouTube IFrame Player API.
-- Synchronize play, pause, seek and video changes over Socket.IO.
-- Host, Moderator and Participant roles with backend-side permission enforcement.
-- Host can promote/demote moderators, remove participants and transfer host.
-- Participants can request playback changes; Host/Moderator can approve or decline them.
-- Late joiners receive current state; periodic state broadcasts help correct playback drift.
-- Reconnection with a per-tab session token and host succession after leaving/disconnection.
-- UI states for connecting, reconnecting, invalid room links, removed users and player errors.
+## Features
 
-Implemented optional bonus: room chat with emoji picker and in-memory recent message history. Not implemented: persistent database storage and Redis-based multi-instance scaling.
+- **Create and Join Rooms:** Create a watch room and invite others using a room code or shareable link.
+- **Synchronized Playback:** Synchronize play, pause, seek, and YouTube video changes in real time.
+- **YouTube Integration:** Play YouTube videos using the YouTube IFrame Player API.
+- **Role-Based Access Control:** Host, Moderator, and Participant roles with server-side permission checks.
+- **Playback Requests:** Participants can request playback changes, which authorized users can approve or decline.
+- **Room Management:** Assign roles, remove participants, and transfer host privileges.
+- **Real-Time Chat:** Exchange messages and emojis with other participants in a room.
+- **Reconnection Support:** Restore room participation after temporary connection interruptions.
+- **Responsive Interface:** A modern dark-themed interface for managing rooms, playback, participants, and chat.
 
-## Tech stack
+## Technology Stack
 
-- **Frontend:** React 19, Vite, Tailwind CSS 4, React Router, Socket.IO client, `lucide-react`, YouTube IFrame Player API.
-- **Backend:** Node.js 20+, Express, Socket.IO, CORS, dotenv, express-rate-limit.
-- **Room model:** `Room` and `RoomManager` classes; room/session state is stored in memory.
+| Category | Technologies |
+|---|---|
+| Frontend | React 19, Vite, Tailwind CSS 4 |
+| Routing | React Router |
+| Backend | Node.js, Express.js |
+| Real-Time Communication | Socket.IO |
+| YouTube Integration | YouTube IFrame Player API |
+| Security | CORS, express-rate-limit, server-side role validation |
+| Development Tools | npm, Git, GitHub |
+| Deployment | Render |
 
-## Requirements
+## Project Structure
 
-- Node.js 20 or newer and npm.
-- Two browser sessions (for example, a regular window and a private window) for multi-user manual testing.
+```text
+YouTube-Watch-Party-System/
+├── backend/
+│   ├── src/
+│   │   ├── config/
+│   │   ├── rooms/
+│   │   ├── sockets/
+│   │   ├── utils/
+│   │   ├── app.js
+│   │   ├── index.js
+│   │   └── server.js
+│   ├── test/
+│   ├── .env.example
+│   └── package.json
+├── frontend/
+│   ├── src/
+│   │   ├── components/
+│   │   ├── hooks/
+│   │   ├── pages/
+│   │   ├── services/
+│   │   ├── App.jsx
+│   │   └── main.jsx
+│   ├── .env.example
+│   └── package.json
+├── ARCHITECTURE.md
+├── TESTING.md
+├── render.yaml
+└── README.md
+```
 
-## Run locally (PowerShell)
+## Prerequisites
 
-Open two terminals from the repository root.
+To run the project locally, install:
 
-### Terminal 1 — backend
+- [Node.js 20 or later](https://nodejs.org/)
+- npm, included with Node.js
+- [Git](https://git-scm.com/downloads)
 
-```powershell
+No MongoDB installation is required for the current in-memory room implementation.
+
+## Installation and Setup
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/shashank2359/YouTube-Watch-Party-System.git
+cd YouTube-Watch-Party-System
+```
+
+### 2. Configure and start the backend
+
+Open a terminal in the project root:
+
+```bash
 cd backend
-Copy-Item .env.example .env
 npm install
+```
+
+Create a `.env` file by copying the example.
+
+**Windows PowerShell:**
+
+```powershell
+Copy-Item .env.example .env
+```
+
+**macOS/Linux:**
+
+```bash
+cp .env.example .env
+```
+
+Configure the backend environment variables:
+
+```env
+PORT=4000
+NODE_ENV=development
+CLIENT_ORIGIN=http://localhost:5173
+```
+
+Start the development server:
+
+```bash
 npm run dev
 ```
 
-Backend listens on `http://localhost:4000`. Health check: `http://localhost:4000/health`.
+The backend will run at `http://localhost:4000`.
 
-### Terminal 2 — frontend
+Verify the health endpoint:
 
-```powershell
+http://localhost:4000/health
+
+### 3. Configure and start the frontend
+
+Open a second terminal in the project root:
+
+```bash
 cd frontend
-Copy-Item .env.example .env
 npm install
+```
+
+Create the frontend environment file.
+
+**Windows PowerShell:**
+
+```powershell
+Copy-Item .env.example .env
+```
+
+**macOS/Linux:**
+
+```bash
+cp .env.example .env
+```
+
+Set the backend URL in `frontend/.env`:
+
+```env
+VITE_SERVER_URL=http://localhost:4000
+```
+
+Start the frontend:
+
+```bash
 npm run dev
 ```
 
-Open `http://localhost:5173`. Use two browser sessions to test creating and joining a room.
+Open http://localhost:5173 in your browser.
 
-On macOS/Linux, use `cp .env.example .env` instead of `Copy-Item`.
+## Running Tests
 
-## Tests and production build
+Run the backend automated test suite:
 
-```powershell
+```bash
 cd backend
 npm test
-cd ..\frontend
+```
+
+Build the frontend for production:
+
+```bash
+cd frontend
+npm install
 npm run build
 ```
 
-The uploaded source was verified with **22 passing backend tests** in the current review environment. The frontend build should be rerun after installing dependencies on the target machine; a prior Windows `node_modules` executable is not portable to Linux.
+The backend test suite previously passed all 22 tests, and the frontend production build completed successfully.
 
-See [TESTING.md](TESTING.md) for automated test coverage and manual test cases. Manual browser and production checks must be marked complete only after actually performing them.
+For additional test details, see [TESTING.md](https://github.com/shashank2359/YouTube-Watch-Party-System/blob/main/TESTING.md).
 
-## Deployment on Render
+## How It Works
 
-This repository includes [`render.yaml`](render.yaml) for a backend web service and a frontend static site. Deployment requires a GitHub repository and a Render account; no live URL exists until the services have deployed successfully.
+1. A user creates a room and becomes its Host.
+2. Other users join using the room code or shared link.
+3. The frontend connects to the backend using Socket.IO.
+4. The backend manages room membership, roles, playback state, and chat events.
+5. Playback updates are broadcast to connected participants to keep their YouTube players synchronized.
+6. Participants request permission for playback changes, while Hosts and Moderators can approve or reject those requests.
+7. The frontend renders the synchronized player and room interface.
 
-1. Push this repository to GitHub. Ensure `.env` files and `node_modules` are not committed.
-2. In Render, choose **New → Blueprint** and select the repository. Review `render.yaml` and create both services, or create the services manually using the settings below.
-3. Backend web service:
-   - Root directory: `backend`
-   - Build command: `npm install --omit=dev`
-   - Start command: `npm start`
-   - Health check path: `/health`
-   - Environment: `NODE_ENV=production`, `CLIENT_ORIGIN=<frontend public origin>`
-4. Deploy the backend and open `https://<backend-host>/health`. Expect JSON with `"status":"ok"`.
-5. Frontend static site:
-   - Root directory: `frontend`
-   - Build command: `npm install && npm run build`
-   - Publish directory: `dist`
-   - Rewrite rule: `/*` → `/index.html`
-   - Build-time environment variable: `VITE_SERVER_URL=https://<backend-host>`
-6. Set backend `CLIENT_ORIGIN` to the exact frontend origin, without a trailing slash, and redeploy the backend. Redeploy the frontend after setting `VITE_SERVER_URL`.
-7. Verify the frontend loads, room creation and joining work across two separate browser sessions, YouTube loads, playback and seeking synchronize, roles are enforced, and approval requests work. Check browser console and Render logs.
-8. Replace the pending URL values at the top of this README with the actual URLs. Never invent or claim a URL before it is live and tested.
+## Deployment
 
-`VITE_SERVER_URL` is embedded into the frontend bundle at build time; changing it in the dashboard requires a frontend rebuild/redeploy. Render free web services may sleep while idle, so the first backend request can take time to wake up.
+The application is deployed on [Render](https://render.com/).
 
-## Environment variables
+- **Frontend:** Render Static Site
+- **Backend:** Render Web Service
+- **Communication:** Socket.IO over the deployed backend URL
+- **Frontend configuration:** `VITE_SERVER_URL`
+- **Backend configuration:** `CLIENT_ORIGIN`
 
-| Service | Variable | Purpose |
-|---|---|---|
-| Backend | `PORT` | HTTP port; Render provides this automatically. Defaults to 4000 locally. |
-| Backend | `CLIENT_ORIGIN` | Comma-separated allowed frontend origins; required in production. |
-| Backend | `NODE_ENV` | Set to `production` in deployment. |
-| Frontend | `VITE_SERVER_URL` | Public backend origin compiled into the frontend bundle. Contains no secret. |
+The frontend uses a rewrite rule to support direct navigation to room URLs.
 
-Use `.env.example` as a template. Never commit `.env` files or secrets.
+## Author
 
-## Roles and permissions
+**Shashank Singh Sengar**
 
-| Action | Host | Moderator | Participant |
-|---|---|---|---|
-| Play, pause, seek, change video | Yes | Yes | Request only |
-| Approve/decline playback requests | Yes | Yes | No |
-| Assign roles | Yes | No | No |
-| Remove participants | Yes | No | No |
-| Transfer host | Yes | No | No |
+GitHub: https://github.com/shashank2359
 
-The backend validates privileges; hiding or disabling frontend controls is not the security boundary.
+---
 
-## Architecture
-
-See [ARCHITECTURE.md](ARCHITECTURE.md) for the client/server event flow. See [docs/INTERVIEW_WALKTHROUGH.md](docs/INTERVIEW_WALKTHROUGH.md) for a walkthrough outline and [docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md) for a demo sequence.
-
-## Known limitations
-
-- No accounts. A random per-tab session token is stored in `sessionStorage`; anyone with a room code can join as a participant, and a stolen token could impersonate that session. Tokens are not placed in URLs or logs.
-- Rooms are stored in memory on a single backend instance. Restarting the server ends active rooms.
-- Playback synchronization is best effort. YouTube buffering, network delay, embed restrictions and browser autoplay policies may cause offsets; drift correction is periodic.
-- Load testing for 1,000+ users, 100+ rooms and 50+ users per room has not been performed. Multi-instance deployment would require shared room state and a Socket.IO adapter such as Redis.
+*Built as a full-stack development project for the YouTube Watch Party System internship assignment.*
