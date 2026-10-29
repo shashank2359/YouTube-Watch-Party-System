@@ -214,5 +214,3 @@ The frontend uses a rewrite rule to support direct navigation to room URLs.
 GitHub: https://github.com/shashank2359
 
 ---
-
-*Built as a full-stack development project for the YouTube Watch Party System internship assignment.*
