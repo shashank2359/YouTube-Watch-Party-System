@@ -1,0 +1,28 @@
+# Render Blueprint: backend web service + frontend static site.
+# After the first deploy, set CLIENT_ORIGIN (backend) and VITE_SERVER_URL (frontend) to the real URLs, then redeploy both.
+services:
+  - type: web
+    name: watchtogether-api
+    runtime: node
+    rootDir: backend
+    buildCommand: npm install --omit=dev
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: CLIENT_ORIGIN
+        sync: false # e.g. https://watchtogether-web.onrender.com
+  - type: web
+    name: watchtogether-web
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_SERVER_URL
+        sync: false # e.g. https://watchtogether-api.onrender.com

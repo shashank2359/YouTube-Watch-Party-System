@@ -1,0 +1,15 @@
+# Dependencies and generated output
+node_modules/
+dist/
+coverage/
+
+# Local environment files (allow checked-in templates)
+.env
+.env.*
+!.env.example
+
+# Logs and OS/editor files
+*.log
+.DS_Store
+Thumbs.db
+.vscode/
